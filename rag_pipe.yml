@@ -1,0 +1,62 @@
+components:
+  embedder:
+    init_parameters:
+      generation_kwargs: {}
+      model: nomic-embed-text
+      timeout: 200
+      url: http://localhost:11434/api/embeddings
+    type: haystack_integrations.components.embedders.ollama.text_embedder.OllamaTextEmbedder
+  llm:
+    init_parameters:
+      generation_kwargs: {}
+      model: phi3
+      raw: false
+      streaming_callback: null
+      system_prompt: null
+      template: null
+      timeout: 300
+      url: http://localhost:11434/api/generate
+    type: haystack_integrations.components.generators.ollama.generator.OllamaGenerator
+  prompt_builder:
+    init_parameters:
+      required_variables: null
+      template: "\nAnswer the questions based on the given context.\n\nContext:\n\
+        {% for document in documents %}\n    {{ document.content }}\n{% endfor %}\n\
+        \nQuestion: {{ question }}\nAnswer:\n"
+      variables: null
+    type: haystack.components.builders.prompt_builder.PromptBuilder
+  retriever:
+    init_parameters:
+      document_store:
+        init_parameters:
+          connection_string:
+            env_vars:
+            - PG_CONN_STR
+            strict: true
+            type: env_var
+          embedding_dimension: 768
+          hnsw_ef_search: null
+          hnsw_index_creation_kwargs: {}
+          hnsw_index_name: haystack_hnsw_index
+          hnsw_recreate_index_if_exists: false
+          keyword_index_name: haystack_keyword_index
+          language: english
+          recreate_table: true
+          search_strategy: hnsw
+          table_name: haystack_documents
+          vector_function: cosine_similarity
+        type: haystack_integrations.document_stores.pgvector.document_store.PgvectorDocumentStore
+      filter_policy: replace
+      filters: {}
+      top_k: 10
+      vector_function: cosine_similarity
+    type: haystack_integrations.components.retrievers.pgvector.embedding_retriever.PgvectorEmbeddingRetriever
+connections:
+- receiver: retriever.query_embedding
+  sender: embedder.embedding
+- receiver: prompt_builder.documents
+  sender: retriever.documents
+- receiver: llm.prompt
+  sender: prompt_builder.prompt
+max_loops_allowed: 100
+metadata: {}
