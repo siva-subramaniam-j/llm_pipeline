@@ -11,7 +11,6 @@ from haystack_integrations.document_stores.pgvector import PgvectorDocumentStore
 import os
 
 '''Updating Environment variable to access the docker postgreSQL using this connection string env variable'''
-os.environ['PG_CONN_STR']="postgresql://postgres:postgres@localhost:5432/postgres"
 
 
 '''Database to store Document and embeddings'''
@@ -44,7 +43,7 @@ document_cleaner = DocumentCleaner()
 document_splitter = DocumentSplitter(split_by="word", split_length=150, split_overlap=50)
 
 '''OllamaDocumentEmbedder is used to create embedding for documents'''
-document_embedder = OllamaDocumentEmbedder()
+document_embedder = OllamaDocumentEmbedder(url="http://host.docker.internal:11434/api/embeddings")
 
 '''document_write is used to write the Document object into the DocumentStore'''
 document_writer = DocumentWriter(document_store)

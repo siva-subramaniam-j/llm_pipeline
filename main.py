@@ -11,7 +11,8 @@ app = FastAPI()
 @app.post("/uploadfile")
 async def upload_file(file: UploadFile = File(...)):
     print("hitting endpoint")
-    if file.content_type != ("text/plain" or "application/pdf" or "text/markdown"):
+    print(file.content_type)
+    if file.content_type not in  ["text/plain" , "application/pdf" , "text/markdown"]:
         raise HTTPException(status_code=400, detail="Only text files are supported.")
 
     print("supported file")
@@ -28,6 +29,7 @@ async def upload_file(file: UploadFile = File(...)):
         print("going to run pipeline")
         preprocessing_pipeline.run({"file_type_router": {"sources": [tmp_path]}})
     except Exception as e:
+        print(e)
         print("some error happened")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -56,5 +58,5 @@ async def rag_query(request: QueryRequest):
 
 
 if __name__=="__main__":
-    uvicorn.run("main:app", host="localhost", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
     
