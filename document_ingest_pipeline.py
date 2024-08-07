@@ -22,7 +22,7 @@ document_store =PgvectorDocumentStore(
 )
 
 '''File Router component to route different file to different components in pipeline'''
-file_type_router = FileTypeRouter(mime_types=["text/plain", "application/pdf", "text/markdown"])
+file_type_router = FileTypeRouter(mime_types=["application/octet-stream","text/plain", "application/pdf", "text/markdown"])
 
 '''Txt file converter'''
 text_file_converter = TextFileToDocument()
