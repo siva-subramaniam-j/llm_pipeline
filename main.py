@@ -12,7 +12,7 @@ app = FastAPI()
 async def upload_file(file: UploadFile = File(...)):
     print("hitting endpoint")
     print(file.content_type)
-    if file.content_type not in  ["text/plain" , "application/pdf" , "text/markdown"]:
+    if file.content_type not in  ["application/octet-stream","text/plain" , "application/pdf" , "text/markdown"]:
         raise HTTPException(status_code=400, detail="Only text files are supported.")
 
     print("supported file")
